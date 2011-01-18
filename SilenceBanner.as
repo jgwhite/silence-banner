@@ -18,6 +18,7 @@ package {
 		
 		private var
 			nextCardTimer:Timer,
+			container:Sprite,
 			background:Sprite,
 			card01Event:Card01Event,
 			card02ActZip:Card02ActZip,
@@ -26,12 +27,26 @@ package {
 			card05ActSilentCollective:Card05ActSilentCollective,
 			card06Info:Card06Info,
 			card07Logos:Card07Logos,
-			bannerButton:Sprite;
+			bannerButton:Sprite,
+			sequence:Array,
+			frame:Number,
+			currentCard:Sprite;
 		
 		public function SilenceBanner () {
 			super();
 			
-			createBackground();
+			container = new Sprite();
+			container.buttonMode = true;
+			container.useHandCursor = true;
+			container.mouseChildren = false;
+			container.addEventListener(MouseEvent.CLICK, onBannerClick);
+			addChild(container);
+			
+			background = new Sprite();
+			background.graphics.beginFill(0x4B617D, 1);
+			background.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+			background.graphics.endFill();
+			container.addChild(background);
 			
 			card01Event = new Card01Event();
 			card02ActZip = new Card02ActZip();
@@ -41,40 +56,36 @@ package {
 			card06Info = new Card06Info();
 			card07Logos = new Card07Logos();
 			
-			createBannerButton();
+			sequence = [
+				{ delay: 2000, card: card02ActZip },
+				{ delay: 2000, card: card03ActBabyFord },
+				{ delay: 2000, card: card04ActMargaretDygas },
+				{ delay: 2000, card: card05ActSilentCollective },
+				{ delay: 4000, card: card01Event },
+				{ delay: 2000, card: card06Info },
+				{ delay: 4000, card: card07Logos }
+			];
 			
-			nextCardTimer = new Timer(2000, 1);
+			nextCardTimer = new Timer(1, 1);
 			nextCardTimer.addEventListener(TimerEvent.TIMER, onNextCardTimer);
 			
 			introduce();
 		}
 		
-		function createBackground ():void {
-			background = new Sprite();
-			background.graphics.beginFill(0x4B617D, 1);
-			background.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
-			background.graphics.endFill();
-			addChild(background);
-		}
-		
-		function createBannerButton ():void {
-			bannerButton = new Sprite();
-			bannerButton.x = 0; bannerButton.y = 0;
-			bannerButton.graphics.beginFill(0xFFFFFF, 0);
-			bannerButton.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
-			bannerButton.graphics.endFill();
-			bannerButton.buttonMode = true;
-			bannerButton.useHandCursor = true;
-			bannerButton.addEventListener(MouseEvent.CLICK, onBannerClick);
-			addChild(bannerButton);
-		}
-		
 		function introduce ():void {
-			
+			frame = -1;
+			gotoNextCard();
 		}
 		
 		function gotoNextCard ():void {
-			
+			var n = sequence.length;
+			frame = (n + ((frame + 1) % n)) % n;
+			if (currentCard) container.removeChild(currentCard);
+			currentCard = sequence[frame].card;
+			container.addChild(currentCard);
+			nextCardTimer.delay = sequence[frame].delay;
+			nextCardTimer.reset();
+			nextCardTimer.start();
 		}
 		
 		function onNextCardTimer (event:TimerEvent):void {
