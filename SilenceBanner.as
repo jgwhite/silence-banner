@@ -17,20 +17,30 @@ package {
 			BANNER_URL:String = "http://www.residentadvisor.net/event.aspx?211556";
 		
 		private var
-			nextCardTimer:Timer,
 			container:Sprite,
 			background:Sprite,
-			card01Event:Card01Event,
-			card02ActZip:Card02ActZip,
-			card03ActBabyFord:Card03ActBabyFord,
-			card04ActMargaretDygas:Card04ActMargaretDygas,
-			card05ActSilentCollective:Card05ActSilentCollective,
-			card06Info:Card06Info,
-			card07Logos:Card07Logos,
-			bannerButton:Sprite,
+			
+			whatMassive:WhatMassive,
+			whatMassiveTween:Tween,
+			
+			whatAndDateTumbler:Tumbler,
+			whatAndDate:WhatAndDate,
+			
+			lineaTumbler:Tumbler,
+			linea:Linea,
+			
+			cardsTumbler:Tumbler,
+			
+			cardActZip:CardActZip,
+			cardActBabyFord:CardActBabyFord,
+			cardActMargaretDygas:CardActMargaretDygas,
+			cardActSilentCollective:CardActSilentCollective,
+			cardVenue:CardVenue,
+			cardLogos:CardLogos,
+			
 			sequence:Array,
-			frame:Number,
-			currentCard:Sprite;
+			nextCardTimer:Timer,
+			frame:Number;
 		
 		public function SilenceBanner () {
 			super();
@@ -48,44 +58,102 @@ package {
 			background.graphics.endFill();
 			container.addChild(background);
 			
-			card01Event = new Card01Event();
-			card02ActZip = new Card02ActZip();
-			card03ActBabyFord = new Card03ActBabyFord();
-			card04ActMargaretDygas = new Card04ActMargaretDygas();
-			card05ActSilentCollective = new Card05ActSilentCollective();
-			card06Info = new Card06Info();
-			card07Logos = new Card07Logos();
+			whatMassive = new WhatMassive();
+			whatMassive.blendMode = 'layer';
+			whatMassive.cacheAsBitmap = true;
+			whatMassive.alpha = 0;
+			container.addChild(whatMassive);
+			
+			whatAndDateTumbler = new Tumbler();
+			whatAndDate = new WhatAndDate();
+			whatAndDate.cacheAsBitmap = true;
+			whatAndDateTumbler.addChild(whatAndDate);
+			container.addChild(whatAndDateTumbler);
+			
+			lineaTumbler = new Tumbler();
+			linea = new Linea();
+			lineaTumbler.addChild(linea);
+			container.addChild(lineaTumbler);
+			
+			cardActZip = new CardActZip();
+			cardActZip.cacheAsBitmap = true;
+			cardActBabyFord = new CardActBabyFord();
+			cardActBabyFord.cacheAsBitmap = true;
+			cardActMargaretDygas = new CardActMargaretDygas();
+			cardActMargaretDygas.cacheAsBitmap = true;
+			cardActSilentCollective = new CardActSilentCollective();
+			cardActSilentCollective.cacheAsBitmap = true;
+			cardVenue = new CardVenue();
+			cardVenue.cacheAsBitmap = true;
+			cardLogos = new CardLogos();
+			cardLogos.cacheAsBitmap = true;
 			
 			sequence = [
-				{ delay: 2000, card: card02ActZip },
-				{ delay: 2000, card: card03ActBabyFord },
-				{ delay: 2000, card: card04ActMargaretDygas },
-				{ delay: 2000, card: card05ActSilentCollective },
-				{ delay: 4000, card: card01Event },
-				{ delay: 3000, card: card06Info },
-				{ delay: 3000, card: card07Logos }
+				{ delay: 2000, card: cardActZip },
+				{ delay: 2000, card: cardActBabyFord },
+				{ delay: 2000, card: cardActMargaretDygas },
+				{ delay: 2000, card: cardActSilentCollective },
+				{ delay: 2000, card: cardVenue },
+				{ delay: 2000, card: cardLogos }
 			];
+			
+			cardsTumbler = new Tumbler();
+			container.addChild(cardsTumbler);
 			
 			nextCardTimer = new Timer(1, 1);
 			nextCardTimer.addEventListener(TimerEvent.TIMER, onNextCardTimer);
+			
+			whatAndDateTumbler.tip = -0.5;
+			lineaTumbler.tip = -0.5;
+			cardsTumbler.tip = -0.5;
 			
 			introduce();
 		}
 		
 		function introduce ():void {
-			frame = -1;
-			gotoNextCard();
+			frame = 0;
+			cardsTumbler.addChild(sequence[frame].card);
+			
+			whatAndDateTumbler.tumbleTo(1);
+			lineaTumbler.tumbleTo(2);
+			cardsTumbler.tumbleTo(0);
+			
+			cardsTumbler.onFinish = function () {
+				nextCardTimer.delay = sequence[frame].delay;
+				nextCardTimer.reset();
+				nextCardTimer.start();
+				
+				whatMassiveTween = new Tween(whatMassive,
+																		 "alpha",
+																		 None.easeNone,
+																		 0,
+																		 0.15,
+																		 15,
+																		 true);
+			}
 		}
 		
 		function gotoNextCard ():void {
+			var cardToRemove:Sprite = sequence[frame].card;
+			
 			var n = sequence.length;
 			frame = (n + ((frame + 1) % n)) % n;
-			if (currentCard) container.removeChild(currentCard);
-			currentCard = sequence[frame].card;
-			container.addChild(currentCard);
-			nextCardTimer.delay = sequence[frame].delay;
-			nextCardTimer.reset();
-			nextCardTimer.start();
+			
+			var cardToAdd:Sprite = sequence[frame].card;
+			
+			cardsTumbler.onReset = function () {
+				if (cardToRemove && cardsTumbler.contains(cardToRemove))
+					cardsTumbler.removeChild(cardToRemove);
+				if (cardToAdd) cardsTumbler.addChild(cardToAdd);
+			}
+			
+			cardsTumbler.tumbleTo(cardsTumbler.tip + 1);
+			
+			cardsTumbler.onFinish = function () {
+				nextCardTimer.delay = sequence[frame].delay;
+				nextCardTimer.reset();
+				nextCardTimer.start();
+			}
 		}
 		
 		function onNextCardTimer (event:TimerEvent):void {
