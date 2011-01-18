@@ -62,8 +62,8 @@ package {
 				{ delay: 2000, card: card04ActMargaretDygas },
 				{ delay: 2000, card: card05ActSilentCollective },
 				{ delay: 4000, card: card01Event },
-				{ delay: 2000, card: card06Info },
-				{ delay: 4000, card: card07Logos }
+				{ delay: 3000, card: card06Info },
+				{ delay: 3000, card: card07Logos }
 			];
 			
 			nextCardTimer = new Timer(1, 1);
