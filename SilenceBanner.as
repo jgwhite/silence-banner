@@ -14,19 +14,33 @@ package {
 	public class SilenceBanner extends MovieClip {
 		
 		static private const
-			BANNER_URL:String = "http://www.residentadvisor.net/event.aspx?184949",
-			CARD_CONTENT_X:Number = 230,
-			CARD_CONTENT_Y:Number = 5;
+			BANNER_URL:String = "http://www.residentadvisor.net/event.aspx?211556";
 		
 		private var
 			nextCardTimer:Timer,
 			background:Sprite,
+			card01Event:Card01Event,
+			card02ActZip:Card02ActZip,
+			card03ActBabyFord:Card03ActBabyFord,
+			card04ActMargaretDygas:Card04ActMargaretDygas,
+			card05ActSilentCollective:Card05ActSilentCollective,
+			card06Info:Card06Info,
+			card07Logos:Card07Logos,
 			bannerButton:Sprite;
 		
 		public function SilenceBanner () {
 			super();
 			
 			createBackground();
+			
+			card01Event = new Card01Event();
+			card02ActZip = new Card02ActZip();
+			card03ActBabyFord = new Card03ActBabyFord();
+			card04ActMargaretDygas = new Card04ActMargaretDygas();
+			card05ActSilentCollective = new Card05ActSilentCollective();
+			card06Info = new Card06Info();
+			card07Logos = new Card07Logos();
+			
 			createBannerButton();
 			
 			nextCardTimer = new Timer(2000, 1);
