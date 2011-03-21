@@ -61,7 +61,7 @@ package {
 			whatMassive = new WhatMassive();
 			whatMassive.blendMode = 'layer';
 			whatMassive.cacheAsBitmap = true;
-			whatMassive.alpha = 0;
+			whatMassive.alpha = 0.15;
 			container.addChild(whatMassive);
 			
 			whatAndDateTumbler = new Tumbler();
@@ -122,14 +122,6 @@ package {
 				nextCardTimer.delay = sequence[frame].delay;
 				nextCardTimer.reset();
 				nextCardTimer.start();
-				
-				whatMassiveTween = new Tween(whatMassive,
-																		 "alpha",
-																		 None.easeNone,
-																		 0,
-																		 0.15,
-																		 15,
-																		 true);
 			}
 		}
 		
@@ -161,7 +153,7 @@ package {
 		}
 		
 		function onBannerClick (event:MouseEvent):void {
-			navigateToURL(new URLRequest(BANNER_URL));
+			navigateToURL(new URLRequest(BANNER_URL), '_blank');
 		}
 		
 	}

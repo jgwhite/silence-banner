@@ -23,8 +23,8 @@ package {
 			super();
 			_tip = 0;
 			_reset = false;
-			cacheAsBitmap = true;
 			blendMode = "layer";
+			cacheAsBitmap = true;
 			tumbleTween = new Tween(this, "tip", Strong.easeInOut, 0, 0, DURATION, true);
 			tumbleTween.addEventListener(TweenEvent.MOTION_CHANGE, onTweenMotionChange);
 			tumbleTween.addEventListener(TweenEvent.MOTION_FINISH, onTweenMotionFinish);
@@ -53,7 +53,7 @@ package {
 		}
 		public function set tip (value:Number):void {
 			_tip = value;
-			y = ((2 * ((_tip - 0.5) - Math.floor(_tip - 0.5))) - 1) * 90;
+			y = Math.round(((2 * ((_tip - 0.5) - Math.floor(_tip - 0.5))) - 1) * 90);
 		}
 		
 	}
